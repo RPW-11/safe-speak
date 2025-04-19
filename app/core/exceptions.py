@@ -1,0 +1,21 @@
+from fastapi import HTTPException
+
+
+class AppExceptionBase(HTTPException):
+    def __init__(self, status_code: int, detail: str):
+        super().__init__(status_code=status_code, detail=detail)
+
+
+class NotFoundException(AppExceptionBase):
+    def __init__(self, detail: str):
+        super().__init__(status_code=404, detail=detail)
+
+
+class DuplicateEntryException(AppExceptionBase):
+    def __init__(self, detail: str):
+        super().__init__(status_code=400, detail=detail)
+
+
+class DatabaseException(AppExceptionBase):
+    def __init__(self, detail: str = "Database error occurred"):
+        super().__init__(status_code=500, detail=detail)
