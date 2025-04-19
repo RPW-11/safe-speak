@@ -5,3 +5,5 @@ pydantic
 pydantic_settings
 psycopg2-binary
 alembic
+passlib
+python-jose

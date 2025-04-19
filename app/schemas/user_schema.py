@@ -4,6 +4,7 @@ from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
+
 class UserBase(BaseModel):
     """Base schema with common fields"""
     username: str = Field(..., min_length=3, max_length=50, pattern=r"^[a-zA-Z0-9_]+$")
@@ -66,3 +67,11 @@ class User(UserInDBBase):
 class UserInDB(UserInDBBase):
     """Schema for user stored in DB (includes hashed password)"""
     hashed_password: str
+
+
+class UserLogin(BaseModel):
+    """Schema for user login"""
+    email: EmailStr
+    password: str
+
+    

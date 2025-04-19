@@ -16,6 +16,11 @@ class DuplicateEntryException(AppExceptionBase):
         super().__init__(status_code=400, detail=detail)
 
 
+class UnauthorizedException(AppExceptionBase):
+    def __init__(self, detail: str):
+        super().__init__(status_code=401, detail=detail)
+
+
 class DatabaseException(AppExceptionBase):
     def __init__(self, detail: str = "Database error occurred"):
         super().__init__(status_code=500, detail=detail)
