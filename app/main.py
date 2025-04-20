@@ -15,9 +15,9 @@ class AppCreator:
 
         self.app.include_router(v1_router, prefix=settings.API_V1_STR, tags=["v1"])
 
-        @self.app.get("/")
-        def root():
-            return {"message": "Welcome to the malicious message detector API"}
+        @self.app.get("/", tags=["Root"])
+        async def root():
+            return {"details": "Welcome to the malicious message detector API"}
 
     def create_app(self):
         return self.app
