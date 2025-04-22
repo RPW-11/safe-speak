@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Text, Date, func
+from sqlalchemy import Column, Text, Date, Index, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 import uuid
@@ -8,11 +8,17 @@ class User(Base):
     __tablename__ = "User"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    oauth_id = Column(Text, nullable=True)
+    oauth_provider = Column(Text, nullable=True)
     username = Column(Text, nullable=False)
     email = Column(Text, nullable=False)
-    hashed_password = Column(Text, nullable=False)
+    hashed_password = Column(Text, nullable=True)
     created_at = Column(Date, nullable=False, default=func.now())
     updated_at = Column(Date, nullable=False, default=func.now(), onupdate=func.now())
 
     # Relationships
     conversations = relationship("Conversation", back_populates="user")
+
+    __table_args__ = (
+        Index('user_oauth_id_index', 'oauth_id'),
+    )

@@ -6,7 +6,7 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 
 class UserBase(BaseModel):
     """Base schema with common fields"""
-    username: str = Field(..., min_length=3, max_length=50, pattern=r"^[a-zA-Z0-9_]+$")
+    username: str = Field(..., min_length=3, max_length=50, pattern=r"^[a-zA-Z0-9_\s]+$")
     email: EmailStr
 
 
@@ -23,6 +23,12 @@ class UserCreate(UserBase):
         if not any(char.islower() for char in v):
             raise ValueError('Password must contain at least one lowercase letter')
         return v
+    
+
+class UserCreateOAuth(UserBase):
+    """Schema for creating a user with OAuth"""
+    oauth_id: str
+    oauth_provider: str 
 
 
 class UserUpdate(BaseModel):
@@ -31,7 +37,7 @@ class UserUpdate(BaseModel):
         default=None,
         min_length=3,
         max_length=50,
-        pattern=r"^[a-zA-Z0-9_]+$"
+        pattern=r"^[a-zA-Z0-9_\s]+$"
     )
     email: Optional[EmailStr] = None
     password: Optional[str] = Field(
@@ -64,8 +70,10 @@ class User(UserInDBBase):
 
 
 class UserInDB(UserInDBBase):
-    """Schema for user stored in DB (includes hashed password)"""
-    hashed_password: str
+    """Schema for user stored in DB (includes hashed password, oauth, and oauth provider)"""
+    oauth_id: Optional[str]
+    oauth_provider: Optional[str]
+    hashed_password: Optional[str]
 
 
 class UserLogin(BaseModel):

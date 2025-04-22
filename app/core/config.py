@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from typing import List
 
 
 class Settings(BaseSettings):
@@ -15,6 +16,15 @@ class Settings(BaseSettings):
 
     # DATABASE CONFIGURATION
     DATABASE_URL: str = ""
+
+    # OAUTH CONFIGURATION
+    OAUTH_PROVIDERS: List[str] = ["google"]
+    GOOGLE_OAUTH_CLIENT_ID: str = ""
+    GOOGLE_OAUTH_CLIENT_SECRET: str = ""
+    GOOGLE_OAUTH_REDIRECT_URI: str = ""
+    GOOGLE_OAUTH_AUTH_URI: str = "https://accounts.google.com/o/oauth2/auth"
+    GOOGLE_OAUTH_TOKEN_URI: str = "https://oauth2.googleapis.com/token"
+    GOOGLE_OAUTH_CERTS_URI: str = "https://www.googleapis.com/oauth2/v1/certs"
 
 
     class Config:

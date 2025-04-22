@@ -1,4 +1,3 @@
-# app/repositories/user_repository.py
 from typing import Optional
 from uuid import UUID
 
@@ -6,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from app.models.user import User
-from app.schemas.user_schema import UserCreate, UserUpdate
+from app.schemas.user_schema import UserCreate, UserCreateOAuth, UserUpdate
 from app.core.exceptions import DuplicateEntryException, NotFoundException, DatabaseException
 
 
@@ -25,14 +24,14 @@ class UserRepository:
             The created User object
             
         Raises:
-            DuplicateEntryException: If username or email already exists
+            DuplicateEntryException: If email already exists
             DatabaseException: For other database errors
         """
         try:
             db_user = User(
                 username=user_create.username,
                 email=user_create.email,
-                hashed_password=user_create.password  # Note: Password should be hashed before this point
+                hashed_password=user_create.password
             )
             self.db.add(db_user)
             self.db.commit()
@@ -40,9 +39,39 @@ class UserRepository:
             return db_user
         except IntegrityError as e:
             self.db.rollback()
-            if "username" in str(e.orig):
-                raise DuplicateEntryException("Username already exists")
-            elif "email" in str(e.orig):
+            if "email" in str(e.orig):
+                raise DuplicateEntryException("Email already exists")
+            raise DatabaseException("Database integrity error occurred")
+        except Exception as e:
+            self.db.rollback()
+            raise DatabaseException(f"Unexpected error creating user: {str(e)}")
+
+    def create_user_oauth(self, user_create: UserCreateOAuth) -> User:
+        """
+        Create a new user in the database using OAuth.
+        
+        Args:
+            user_create: UserCreateOAuth schema with user data
+        Returns:
+            The created User object
+        Raises:
+            DuplicateEntryException: If email already exists
+            DatabaseException: For other database errors
+        """
+        try:
+            db_user = User(
+                username=user_create.username,
+                email=user_create.email,
+                oauth_id=user_create.oauth_id,
+                oauth_provider=user_create.oauth_provider
+            )
+            self.db.add(db_user)
+            self.db.commit()
+            self.db.refresh(db_user)
+            return db_user
+        except IntegrityError as e:
+            self.db.rollback()
+            if "email" in str(e.orig):
                 raise DuplicateEntryException("Email already exists")
             raise DatabaseException("Database integrity error occurred")
         except Exception as e:
