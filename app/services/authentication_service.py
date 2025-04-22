@@ -112,17 +112,23 @@ class AuthenticationService:
         )
     
     def refresh_access_token(self, refresh_token: str) -> Token:
+        token_exception = UnauthorizedException("Invalid refresh token")
+        
+        if not refresh_token:
+            raise token_exception
+
         payload = decode_token(refresh_token)
+
         if not payload or not payload.get("refresh"):
-            raise UnauthorizedException("Invalid refresh token")
+            raise token_exception
         
         user_id = payload.get("sub")
         if not user_id:
-            raise UnauthorizedException("Invalid refresh token")
+            raise token_exception
         
         # Verify user still exists
         user = self.user_repository.get_user_by_id(user_id)
         if not user:
-            raise UnauthorizedException("User no longer exists")
+            raise token_exception
 
         return self.create_tokens(user_id)

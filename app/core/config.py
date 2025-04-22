@@ -26,6 +26,11 @@ class Settings(BaseSettings):
     GOOGLE_OAUTH_TOKEN_URI: str = "https://oauth2.googleapis.com/token"
     GOOGLE_OAUTH_CERTS_URI: str = "https://www.googleapis.com/oauth2/v1/certs"
 
+    # CORS CONFIGURATION
+    CORS_ALLOWED_ORIGINS: List[str] = ["http://localhost:3000"]
+    CORS_ALLOWED_METHODS: List[str] = ["*"]
+    CORS_ALLOWED_HEADERS: List[str] = ["*"]
+
 
     class Config:
         env_file = ".env"
