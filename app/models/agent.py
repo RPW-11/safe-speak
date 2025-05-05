@@ -12,5 +12,5 @@ class Agent(Base):
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=False)
 
-    # Relationships
-    conversations = relationship("Conversation", back_populates="agent")
+    # relationship
+    messages = relationship("Message", back_populates="agent")

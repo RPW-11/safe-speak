@@ -1,15 +1,29 @@
-from datetime import datetime
-from uuid import UUID
-from pydantic import BaseModel, Field
+from datetime import date
+from pydantic import BaseModel, UUID4
+from typing import Optional
 
 
-class Conversation(BaseModel):
-    id: UUID
-    user_id: UUID
-    agent_id: UUID
-    title: str = Field(..., min_length=3, max_length=50)
-    created_at: datetime
-    updated_at: datetime
+class ConversationBase(BaseModel):
+    user_id: UUID4
+    title: str
+
+
+class ConversationCreate(ConversationBase):
+    pass
+
+
+class ConversationUpdate(BaseModel):
+    title: str
+
+
+class ConversationInDB(ConversationBase):
+    id: UUID4
+    created_at: date
+    updated_at: date
 
     class Config:
         from_attributes = True
+
+
+class Conversation(ConversationInDB):
+    pass

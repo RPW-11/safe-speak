@@ -73,6 +73,7 @@ async def login(response: Response, user_data: UserLogin, db: Session = Depends(
 
     return user
 
+
 @router.get("/login/oauth", response_class=RedirectResponse)
 async def login_oauth(client_redirect_url: str, oauth_provider: str = "google"):
     params = {

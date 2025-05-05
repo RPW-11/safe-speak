@@ -9,14 +9,12 @@ class Conversation(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("User.id"), nullable=False)
-    agent_id = Column(UUID(as_uuid=True), ForeignKey("Agent.id"), nullable=False)
     title = Column(Text, nullable=False)
-    created_at = Column(Date, nullable=False)
-    updated_at = Column(Date, nullable=False)
+    created_at = Column(Date, nullable=False, default=func.now())
+    updated_at = Column(Date, nullable=False, default=func.now(), onupdate=func.now())
 
     # Relationships
     user = relationship("User", back_populates="conversations")
-    agent = relationship("Agent", back_populates="conversations")
     messages = relationship("Message", back_populates="conversation")
 
     __table_args__ = (
