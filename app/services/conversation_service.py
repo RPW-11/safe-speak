@@ -1,5 +1,4 @@
 from uuid import UUID
-from datetime import date
 from typing import Optional, List
 from fastapi import HTTPException, status
 from app.core.exceptions import UnauthorizedException
@@ -17,7 +16,6 @@ class ConversationService:
         try:
             conversation_data = ConversationCreate(
                 user_id=self.user_id,
-                title="For what it's worth"
             )
             
             return self.repository.create_conversation(conversation_data)

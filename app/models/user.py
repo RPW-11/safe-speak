@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Text, Date, Index, func
+from sqlalchemy import Column, Text, DateTime, Index, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 import uuid
@@ -13,8 +13,8 @@ class User(Base):
     username = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
     hashed_password = Column(Text, nullable=True)
-    created_at = Column(Date, nullable=False, default=func.now())
-    updated_at = Column(Date, nullable=False, default=func.now(), onupdate=func.now())
+    created_at = Column(DateTime, nullable=False, default=func.now())
+    updated_at = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())
 
     # Relationships
     conversations = relationship("Conversation", back_populates="user")

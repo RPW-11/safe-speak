@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Text, Date, ForeignKey, Boolean, Enum, func
+from sqlalchemy import Column, Text, DateTime, ForeignKey, Boolean, Enum, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 import uuid
@@ -15,8 +15,8 @@ class Message(Base):
     type = Column(Text, nullable=False)
     content = Column(Text, nullable=False)
     img_url = Column(Text, nullable=True)
-    created_at = Column(Date, nullable=False, default=func.now())
-    updated_at = Column(Date, nullable=False, default=func.now(), onupdate=func.now())
+    created_at = Column(DateTime, nullable=False, default=func.now())
+    updated_at = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())
 
     # Relationships
     conversation = relationship("Conversation", back_populates="messages")

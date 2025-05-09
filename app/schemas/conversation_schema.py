@@ -1,11 +1,11 @@
-from datetime import date
+from datetime import datetime
 from pydantic import BaseModel, UUID4
 from typing import Optional
 
 
 class ConversationBase(BaseModel):
     user_id: UUID4
-    title: str
+    title: Optional[str] = None
 
 
 class ConversationCreate(ConversationBase):
@@ -18,8 +18,8 @@ class ConversationUpdate(BaseModel):
 
 class ConversationInDB(ConversationBase):
     id: UUID4
-    created_at: date
-    updated_at: date
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True

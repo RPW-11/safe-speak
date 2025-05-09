@@ -1,0 +1,34 @@
+from datetime import datetime
+from pydantic import BaseModel, UUID4
+from typing import Optional
+
+
+class MessageBase(BaseModel):
+    conversation_id: Optional[UUID4] = None
+    agent_id: Optional[UUID4] = None
+    model: Optional[str] = None
+    type: str
+    content: str
+    img_url: Optional[str] = None
+
+
+class MessageCreate(MessageBase):
+    pass
+
+
+class MessageUpdate(BaseModel):
+    content: Optional[str] = None
+    img_url: Optional[str] = None
+
+
+class MessageInDB(MessageBase):
+    id: UUID4
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class Message(MessageInDB):
+    pass

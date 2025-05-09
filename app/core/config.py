@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     # DATABASE CONFIGURATION
     DATABASE_URL: str = ""
 
+    # GEMINI CONFIGURATION
+    GEMINI_API_KEY: str = ""
+
     # OAUTH CONFIGURATION
     OAUTH_PROVIDERS: List[str] = ["google"]
     GOOGLE_OAUTH_CLIENT_ID: str = ""

@@ -12,9 +12,7 @@ class ConversationRepository:
     def create_conversation(self, conversation: ConversationCreate) -> Conversation:
         db_conversation = Conversation(
             user_id=conversation.user_id,
-            title=conversation.title,
-            created_at=date.today(),
-            updated_at=date.today()
+            title=conversation.title
         )
         self.db.add(db_conversation)
         self.db.commit()

@@ -1,9 +1,13 @@
-from fastapi import Request
+from fastapi import Request, Depends
 from jose import JWTError
 
 from app.core.security import decode_token
-from app.core.exceptions import UnauthorizedException
-
+from app.core.exceptions import UnauthorizedException, NotFoundException
+from app.infrastructures.protection_agent.provider import ProtectionAgentProvider
+from app.infrastructures.adversary.provider import AdversaryAgentProvider
+from app.infrastructures.protection_agent.base import ProtectionAgentBase
+from app.infrastructures.adversary.base import AdversaryBase
+from app.schemas.message_schema import MessageCreate
 
 async def get_user_id(
     request: Request
@@ -27,3 +31,23 @@ async def get_user_id(
     
     except JWTError:
         raise credentials_exception
+    
+
+async def get_protection_agent(
+    message_data: MessageCreate,
+    provider: ProtectionAgentProvider = Depends()
+) -> ProtectionAgentBase:
+    try:
+        return provider.get_agent(message_data.model)
+    except ValueError as e:
+        raise NotFoundException(detail=str(e))
+    
+
+async def get_adversary_agent(
+    message_data: MessageCreate,
+    provider: AdversaryAgentProvider = Depends()
+) -> AdversaryBase:
+    try:
+        return provider.get_agent("julia")
+    except ValueError as e:
+        raise NotFoundException(detail=str(e))
