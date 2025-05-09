@@ -24,3 +24,8 @@ class UnauthorizedException(AppExceptionBase):
 class DatabaseException(AppExceptionBase):
     def __init__(self, detail: str = "Database error occurred"):
         super().__init__(status_code=500, detail=detail)
+
+
+class ForbiddenException(AppExceptionBase):
+    def __init__(self, detail: str):
+        super().__init__(status_code=403, detail=detail)

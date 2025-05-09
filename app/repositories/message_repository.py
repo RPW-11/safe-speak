@@ -9,28 +9,22 @@ class MessageRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_messages(self, message_1: MessageCreate, message_2: MessageCreate):
-        db_message_1 = Message(
-            conversation_id=message_1.conversation_id,
-            agent_id=message_1.agent_id,
-            model=message_1.model,
-            type=message_1.type,
-            content=message_1.content,
-            img_url=message_1.img_url
+    def create_message(self, message: MessageCreate):
+        db_message = Message(
+            conversation_id=message.conversation_id,
+            agent_id=message.agent_id,
+            model=message.model,
+            type=message.type,
+            content=message.content,
+            img_url=message.img_url
         )
 
-        db_message_2 = Message(
-            conversation_id=message_2.conversation_id,
-            agent_id=message_2.agent_id,
-            model=message_2.model,
-            type=message_2.type,
-            content=message_2.content,
-            img_url=message_2.img_url
-        )
-
-        self.db.add_all([db_message_1, db_message_2])
+        self.db.add(db_message)
         self.db.commit()
+        self.db.refresh(db_message)
 
-    def load_messages(self, conversation_id: UUID):
-        return self.db.query(Message).filter(Message.conversation_id == conversation_id).all()
+        return db_message
+
+    def load_messages_by_convo_id(self, conversation_id: UUID):
+        return self.db.query(Message).filter(Message.conversation_id == conversation_id).order_by(Message.created_at.asc()).all()
     
