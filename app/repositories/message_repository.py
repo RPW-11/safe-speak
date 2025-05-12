@@ -9,10 +9,11 @@ class MessageRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_message(self, message: MessageCreate):
+    def create_message(self, message: MessageCreate, role: str):
         db_message = Message(
             conversation_id=message.conversation_id,
-            agent_id=message.agent_id,
+            role=role,
+            agent_model = message.agent_model,
             model=message.model,
             type=message.type,
             content=message.content,
@@ -27,4 +28,7 @@ class MessageRepository:
 
     def load_messages_by_convo_id(self, conversation_id: UUID):
         return self.db.query(Message).filter(Message.conversation_id == conversation_id).order_by(Message.created_at.asc()).all()
+    
+    def load_recent_messages(self, conversation_id: UUID, n_messages: int):
+        return self.db.query(Message).filter(Message.conversation_id == conversation_id).order_by(Message.created_at.desc()).limit(n_messages).all()
     

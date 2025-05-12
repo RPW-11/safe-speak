@@ -5,8 +5,8 @@ from typing import Optional
 
 class MessageBase(BaseModel):
     conversation_id: Optional[UUID4] = None
-    agent_id: Optional[UUID4] = None
-    model: Optional[str] = None
+    agent_model: str
+    model: str
     type: str
     content: str
     img_url: Optional[str] = None
@@ -23,6 +23,7 @@ class MessageUpdate(BaseModel):
 
 class MessageInDB(MessageBase):
     id: UUID4
+    role: str
     created_at: datetime
     updated_at: datetime
 

@@ -11,6 +11,7 @@ class ThreatIndicator(Base):
     message_id = Column(UUID(as_uuid=True), ForeignKey("Message.id"), nullable=False)
     is_threat = Column(Boolean, nullable=False)
     description = Column(Text, nullable=False)
+    user_description = Column(Text, nullable=True)
 
     # Relationships
     message = relationship("Message", back_populates="threat_indicator")

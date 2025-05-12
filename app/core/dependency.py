@@ -48,6 +48,6 @@ async def get_adversary_agent(
     provider: AdversaryAgentProvider = Depends()
 ) -> AdversaryBase:
     try:
-        return provider.get_agent("julia")
+        return provider.get_agent(message_data.agent_model)
     except ValueError as e:
         raise NotFoundException(detail=str(e))

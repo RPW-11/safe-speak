@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 import textwrap
 
+from app.schemas.protection_schema import ProtectionResponse
+
 
 class ProtectionAgentBase(ABC):
     """
@@ -65,7 +67,7 @@ class ProtectionAgentBase(ABC):
         )
 
     @abstractmethod
-    def process_message(self, message: str, conversation: str) -> dict:
+    def process_message(self, message: str, conversation: str) -> ProtectionResponse:
         """
         Process the message and return the result in the following format:
         {

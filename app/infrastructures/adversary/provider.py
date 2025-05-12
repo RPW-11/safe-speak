@@ -2,13 +2,14 @@ from typing import Dict, Type
 from app.infrastructures.adversary.base import AdversaryBase
 from app.infrastructures.adversary.gemini import GeminiAdversary
 from app.core.config import settings
-from .persona import JULIA_PERSONA
+from .persona import JULIA_PERSONA, LUCAS_PERSONA
 
 
 class AdversaryAgentProvider:
     def __init__(self):
         self._agents: Dict[str, Type[AdversaryBase]] = {
             "julia": self._create_julia_agent,
+            "lucas": self._create_lucas_agent,
         }
     
     def get_agent(self, agent_name: str) -> AdversaryBase:
@@ -22,3 +23,6 @@ class AdversaryAgentProvider:
     
     def _create_julia_agent(self) -> AdversaryBase:
         return self._create_gemini_agent(name="julia", persona=JULIA_PERSONA)
+    
+    def _create_lucas_agent(self) -> AdversaryBase:
+        return self._create_gemini_agent(name="lucas", persona=LUCAS_PERSONA)

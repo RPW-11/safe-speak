@@ -9,7 +9,7 @@ class GeminiProtectionAgent(ProtectionAgentBase):
         self.client = genai.Client(api_key=api_key)
         self.model = 'gemini-2.0-flash'
 
-    def process_message(self, message, conversation):
+    def process_message(self, message, conversation) -> ProtectionResponse:
         system_prompt = self.get_system_prompt(conversation, message)
 
         response = self.client.models.generate_content(

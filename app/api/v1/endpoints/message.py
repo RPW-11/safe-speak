@@ -26,7 +26,7 @@ async def send_message(
     
     return StreamingResponse(
         messaging_service.send_message(message_data, protection_agent, adversary_agent),
-        media_type="text/event-stream"
+        media_type="application/json"
     )
 
 

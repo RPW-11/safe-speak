@@ -10,7 +10,8 @@ class Message(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     conversation_id = Column(UUID(as_uuid=True), ForeignKey("Conversation.id"), nullable=False)
-    agent_id = Column(UUID(as_uuid=True), ForeignKey("Agent.id"), nullable=True)
+    role = Column(Text, nullable=False)
+    agent_model = Column(Text, nullable=False)
     model = Column(Text, nullable=True)
     type = Column(Text, nullable=False)
     content = Column(Text, nullable=False)
@@ -20,5 +21,4 @@ class Message(Base):
 
     # Relationships
     conversation = relationship("Conversation", back_populates="messages")
-    agent = relationship("Agent", back_populates="messages")
     threat_indicator = relationship("ThreatIndicator", back_populates="message")
