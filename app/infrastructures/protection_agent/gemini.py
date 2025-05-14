@@ -22,6 +22,13 @@ class GeminiProtectionAgent(ProtectionAgentBase):
         )
         
         return response.parsed
+    
+    def generate_conversation_title(self, user_prompt):
+        title = self.client.models.generate_content(
+            model=self.model,
+            contents=f"Generate a single descriptive conversation title based on the following user prompt:\nUser: {user_prompt}\nRETURN THE TITLE ONLY!"
+        )
+        return title.text
 
     def heartbeat(self) -> bool:
         try:

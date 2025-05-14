@@ -9,7 +9,7 @@ class Message(Base):
     __tablename__ = "Message"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    conversation_id = Column(UUID(as_uuid=True), ForeignKey("Conversation.id"), nullable=False)
+    conversation_id = Column(UUID(as_uuid=True), ForeignKey("Conversation.id", ondelete="CASCADE"), nullable=False)
     role = Column(Text, nullable=False)
     agent_model = Column(Text, nullable=False)
     model = Column(Text, nullable=True)
@@ -20,5 +20,5 @@ class Message(Base):
     updated_at = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())
 
     # Relationships
-    conversation = relationship("Conversation", back_populates="messages")
-    threat_indicator = relationship("ThreatIndicator", back_populates="message")
+    conversation = relationship("Conversation", back_populates="messages", passive_deletes=True)
+    threat_indicator = relationship("ThreatIndicator", back_populates="message", uselist=False)

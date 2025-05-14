@@ -24,15 +24,17 @@ class ProtectionAgentBase(ABC):
         10. Identify any messages that contain illegal activity or solicitation.
         """)
         self.protection_prompt = textwrap.dedent("""
-        You are a protection agent. Your job is to protect the user from malicious messages sent by their chatting partner.
+        You are a protection agent. Your job is to protect the User from malicious messages sent by their chatting partner.
         You will receive a list of messages from the on going conversation and you need to determine if the current message is malicious or not.
-        If the message is malicious, you need to mark it as true in is_malicious attribute and provide a reason for why it is malicious.
+        If the message is malicious, you need to mark it as true in is_malicious attribute and provide a reason for why it is malicious with the action the user should take.
         If the message is not malicious, you need to mark it as false in is_malicious attribute and do not provide a reason.
+        ONLY FOCUS ON THE USER CHATTING PARTNER, YOU SHOULD NEVER MARKED USER's MESSAGE as MALICIOUS!                                      
+        
 
         The following is the format you should use to respond if the message is malicious:
         {{
             "is_malicious": true,
-            "reason": "reason for why the message is malicious"
+            "reason": "reason for why the message is malicious and the action the user should take"
         }}
         The following is the format you should use to respond if the message is not malicious:
         {{
@@ -75,6 +77,11 @@ class ProtectionAgentBase(ABC):
             "reason": "reason for why the message is malicious"
         }
         """
+        pass
+
+    @abstractmethod
+    def generate_conversation_title(self, user_prompt: str) -> str:
+        """Generate conversation title"""
         pass
 
     @abstractmethod

@@ -1,6 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel, UUID4
-from typing import Optional
+from typing import Optional, List
+from app.schemas.protection_schema import ThreatResponse
 
 
 class MessageBase(BaseModel):
@@ -32,4 +33,4 @@ class MessageInDB(MessageBase):
 
 
 class Message(MessageInDB):
-    pass
+    threat_indicator: Optional[ThreatResponse]

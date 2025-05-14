@@ -1,5 +1,5 @@
 from uuid import UUID
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.models.message import Message
 from app.schemas.message_schema import MessageCreate
@@ -27,7 +27,7 @@ class MessageRepository:
         return db_message
 
     def load_messages_by_convo_id(self, conversation_id: UUID):
-        return self.db.query(Message).filter(Message.conversation_id == conversation_id).order_by(Message.created_at.asc()).all()
+        return self.db.query(Message).filter(Message.conversation_id == conversation_id).options(joinedload(Message.threat_indicator)).order_by(Message.created_at.asc()).all()
     
     def load_recent_messages(self, conversation_id: UUID, n_messages: int):
         return self.db.query(Message).filter(Message.conversation_id == conversation_id).order_by(Message.created_at.desc()).limit(n_messages).all()

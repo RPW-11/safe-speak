@@ -1,5 +1,5 @@
 from uuid import UUID
-from datetime import date
+from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from app.models.conversation import Conversation
 from app.schemas.conversation_schema import ConversationCreate, ConversationUpdate
@@ -23,7 +23,7 @@ class ConversationRepository:
         return self.db.query(Conversation).filter(Conversation.id == conversation_id).first()
 
     def get_user_conversations(self, user_id: UUID) -> List[Conversation]:
-        return self.db.query(Conversation).filter(Conversation.user_id == user_id).all()
+        return self.db.query(Conversation).filter(Conversation.user_id == user_id).order_by(Conversation.updated_at.desc()).all()
 
     def update_conversation(
         self, 
@@ -34,14 +34,11 @@ class ConversationRepository:
         if db_conversation is None:
             return None
             
-        update_data = conversation.model_dump(exclude_unset=True)
-        if "title" in update_data:
-            db_conversation.title = update_data["title"]
-        if "updated_at" in update_data:
-            db_conversation.updated_at = update_data["updated_at"]
-        else:
-            db_conversation.updated_at = date.today()
-            
+        if conversation.title:
+            db_conversation.title = conversation.title
+        
+        db_conversation.updated_at = datetime.now(timezone.utc)
+
         self.db.commit()
         self.db.refresh(db_conversation)
         return db_conversation
@@ -54,13 +51,3 @@ class ConversationRepository:
         self.db.delete(db_conversation)
         self.db.commit()
         return True
-
-    # def get_conversation_by_user_and_agent(
-    #     self, 
-    #     user_id: UUID, 
-    #     agent_id: UUID
-    # ) -> Optional[Conversation]:
-    #     return self.db.query(Conversation).filter(
-    #         Conversation.user_id == user_id,
-    #         Conversation.agent_id == agent_id
-    #     ).first()

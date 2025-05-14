@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
-from typing import Iterator
+from typing import AsyncGenerator
 from fastapi import HTTPException, status
+from asyncio import to_thread
 
 from app.repositories.conversation_repository import ConversationRepository
 from app.repositories.message_repository import MessageRepository
@@ -8,6 +9,7 @@ from app.repositories.threat_indicator_repository import ThreatIndicatorReposito
 from app.schemas.message_schema import MessageCreate, Message
 from app.schemas.stream_schema import StreamResponseData
 from app.schemas.protection_schema import ThreatResponse
+from app.schemas.conversation_schema import ConversationUpdate, Conversation
 from app.infrastructures.protection_agent.base import ProtectionAgentBase
 from app.infrastructures.adversary.base import AdversaryBase
 from app.core.exceptions import ForbiddenException, NotFoundException
@@ -21,26 +23,41 @@ class MessagingService:
         self.message_repository = MessageRepository(db)
         self.threat_repository = ThreatIndicatorRepository(db)
     
-    def send_message(
+    async def send_message(
         self,
         user_msg_data: MessageCreate,
         protection_agent: ProtectionAgentBase,
         adversary_agent: AdversaryBase
-    ) -> Iterator[str]:
+    ) -> AsyncGenerator[str, None]:
         try:
             recent_messages = self.message_repository.load_recent_messages(user_msg_data.conversation_id, 20)
+            new_conversation = len(recent_messages) == 0
             recent_messages = format_messages_to_history(recent_messages)
 
+            # insert user msg 1st time
             inserted_user_msg = self.message_repository.create_message(user_msg_data, "user")
             schema_format_user_msg = Message.model_validate(inserted_user_msg)
-            
             yield StreamResponseData(
                 type="user-msg",
                 data=schema_format_user_msg
             ).model_dump_json()
+            
+            # setup conversation update
+            def update_conversation():
+                update_attr = ConversationUpdate()
+                if new_conversation:
+                    update_attr.title = protection_agent.generate_conversation_title(user_msg_data.content)
+                updated_conversation = self.conversation_repository.update_conversation(
+                    user_msg_data.conversation_id,
+                    update_attr
+                )
+                return  updated_conversation
+            
+            update_title_thread = to_thread(update_conversation)
 
+            # agent stream response initialization
             response_iterator = adversary_agent.respond(user_msg_data.content, recent_messages)
-            response_text = ""
+            response_text = ""    
 
             for chunk in response_iterator:
                 response_text += chunk
@@ -63,6 +80,14 @@ class MessagingService:
             yield StreamResponseData(
                 type="ai-msg",
                 data=schema_format_adversary_msg
+            ).model_dump_json()
+
+            
+            updated_conversation = await update_title_thread
+            format_updated_conversation = Conversation.model_validate(updated_conversation)
+            yield StreamResponseData(
+                type="new-conversation",
+                data=format_updated_conversation
             ).model_dump_json()
 
             recent_messages += f"User: {user_msg_data.content}\n"

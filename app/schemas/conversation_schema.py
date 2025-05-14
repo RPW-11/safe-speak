@@ -13,7 +13,7 @@ class ConversationCreate(ConversationBase):
 
 
 class ConversationUpdate(BaseModel):
-    title: str
+    title: Optional[str] = None
 
 
 class ConversationInDB(ConversationBase):
