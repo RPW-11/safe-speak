@@ -16,7 +16,7 @@ class Conversation(Base):
 
     # Relationships
     user = relationship("User", back_populates="conversations", passive_deletes=True)
-    messages = relationship("Message", back_populates="conversation")
+    messages = relationship("Message", back_populates="conversation", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index('conversation_user_id_index', 'user_id'),

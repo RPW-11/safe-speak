@@ -21,4 +21,4 @@ class Message(Base):
 
     # Relationships
     conversation = relationship("Conversation", back_populates="messages", passive_deletes=True)
-    threat_indicator = relationship("ThreatIndicator", back_populates="message", uselist=False)
+    threat_indicator = relationship("ThreatIndicator", back_populates="message", uselist=False, cascade="all, delete-orphan")

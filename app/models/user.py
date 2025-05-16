@@ -17,7 +17,7 @@ class User(Base):
     updated_at = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())
 
     # Relationships
-    conversations = relationship("Conversation", back_populates="user")
+    conversations = relationship("Conversation", back_populates="user", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index('user_oauth_id_index', 'oauth_id'),

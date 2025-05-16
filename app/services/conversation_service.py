@@ -1,8 +1,9 @@
 from uuid import UUID
 from typing import Optional, List
 from fastapi import HTTPException, status
-from app.core.exceptions import UnauthorizedException
+from app.core.exceptions import UnauthorizedException, NotFoundException
 from app.schemas.conversation_schema import ConversationCreate, ConversationUpdate, Conversation
+from app.schemas.base_response_schema import BaseResponse
 from app.repositories.conversation_repository import ConversationRepository
 from sqlalchemy.orm import Session
 
@@ -34,10 +35,7 @@ class ConversationService:
         try:
             existing = self.repository.get_conversation(conversation_id)
             if not existing:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Conversation not found"
-                )
+                raise NotFoundException(detail="Conversation not found")
             
             if str(existing.user_id) != self.user_id:
                 raise UnauthorizedException("Invalid owner of the conversation")
@@ -52,16 +50,14 @@ class ConversationService:
     def delete_conversation(self, conversation_id: UUID) -> bool:
         existing = self.repository.get_conversation(conversation_id)
         if not existing:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Conversation not found"
-            )
+            raise NotFoundException(detail="Conversation not found")
         
         if str(existing.user_id) != self.user_id:
             raise UnauthorizedException("Invalid owner of the conversation") 
            
         try:
-            return self.repository.delete_conversation(conversation_id)
+            self.repository.delete_conversation(conversation_id)
+            return BaseResponse(detail="Conversation has been deleted")
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

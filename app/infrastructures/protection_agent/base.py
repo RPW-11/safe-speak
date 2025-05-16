@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 import textwrap
+import requests
+import base64
 
 from app.schemas.protection_schema import ProtectionResponse
 
@@ -17,7 +19,7 @@ class ProtectionAgentBase(ABC):
         3. Be on the lookout for messages that contain hate speech or discriminatory language.
         4. Check for any messages that contain links to suspicious websites or downloads.
         5. Look for any messages that contain spam or phishing attempts.
-        6. Identify any messages that contain explicit content or graphic images.
+        6. Identify any messages that contain explicit content or graphic images. If there's an image, the image description will be provided and use it to determine whether a message is malicious or not!
         7. Be aware of any messages that contain false information or conspiracy theories.
         8. Check for any messages that contain malware or viruses.
         9. Look for any messages that contain harassment or bullying behavior.
@@ -90,3 +92,22 @@ class ProtectionAgentBase(ABC):
         Check if the agent is alive.
         """
         pass
+
+    def analyze_image_api(self, img_url: str) -> str:
+        API_URL = "https://docsbot.ai/api/tools/image-prompter"
+
+        response = requests.get(img_url)
+        image_bytes = response.content
+        image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+
+        payload = {
+            'image': image_base64,
+            'type': 'description'
+        }
+
+        api_response = requests.post(
+            API_URL,
+            json=payload
+        )
+
+        return f"Image Description: {api_response.json()}"

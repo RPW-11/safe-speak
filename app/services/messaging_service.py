@@ -34,13 +34,16 @@ class MessagingService:
             new_conversation = len(recent_messages) == 0
             recent_messages = format_messages_to_history(recent_messages)
 
-            # insert user msg 1st time
-            inserted_user_msg = self.message_repository.create_message(user_msg_data, "user")
-            schema_format_user_msg = Message.model_validate(inserted_user_msg)
-            yield StreamResponseData(
-                type="user-msg",
-                data=schema_format_user_msg
-            ).model_dump_json()
+            # agent stream response initialization
+            response_iterator = adversary_agent.respond(user_msg_data.content, recent_messages)
+            response_text = ""    
+
+            for chunk in response_iterator:
+                response_text += chunk
+                yield StreamResponseData(
+                    type="ai-response",
+                    data=chunk
+                ).model_dump_json()
             
             # setup conversation update
             def update_conversation():
@@ -54,17 +57,14 @@ class MessagingService:
                 return  updated_conversation
             
             update_title_thread = to_thread(update_conversation)
-
-            # agent stream response initialization
-            response_iterator = adversary_agent.respond(user_msg_data.content, recent_messages)
-            response_text = ""    
-
-            for chunk in response_iterator:
-                response_text += chunk
-                yield StreamResponseData(
-                    type="ai-response",
-                    data=chunk
-                ).model_dump_json()
+            
+            # insert user msg 1st time
+            inserted_user_msg = self.message_repository.create_message(user_msg_data, "user")
+            schema_format_user_msg = Message.model_validate(inserted_user_msg)
+            yield StreamResponseData(
+                type="user-msg",
+                data=schema_format_user_msg
+            ).model_dump_json()
 
             adversary_message = MessageCreate(
                 conversation_id=inserted_user_msg.conversation_id,
