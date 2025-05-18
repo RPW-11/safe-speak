@@ -69,7 +69,7 @@ class MessagingService:
             adversary_message = MessageCreate(
                 conversation_id=inserted_user_msg.conversation_id,
                 agent_model=inserted_user_msg.agent_model,
-                model = adversary_agent.name,
+                model = inserted_user_msg.model,
                 type="text",
                 content=response_text,
                 img_url=None

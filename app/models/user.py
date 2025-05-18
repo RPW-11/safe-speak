@@ -12,6 +12,7 @@ class User(Base):
     oauth_provider = Column(Text, nullable=True)
     username = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
+    img_url = Column(Text, nullable=True)
     hashed_password = Column(Text, nullable=True)
     created_at = Column(DateTime, nullable=False, default=func.now())
     updated_at = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())

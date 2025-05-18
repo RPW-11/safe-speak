@@ -132,3 +132,9 @@ class AuthenticationService:
             raise token_exception
 
         return self.create_tokens(user_id)
+    
+    def get_user_details_by_id(self, user_id: str) -> User:
+        user = self.user_repository.get_user_by_id(user_id)
+        if not user:
+            raise NotFoundException("User not found")
+        return user

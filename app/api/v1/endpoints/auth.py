@@ -7,6 +7,7 @@ import httpx
 from app.schemas.base_response_schema import BaseResponse
 from app.schemas.user_schema import UserCreate, UserLogin, User
 from app.core.database import get_db
+from app.core.dependency import get_user_id
 from app.services.authentication_service import AuthenticationService
 from app.core.config import settings
 
@@ -148,6 +149,16 @@ async def refresh(request: Request, response: Response, db: Session = Depends(ge
     )
 
     return BaseResponse(detail="Your token has been refreshed")
+
+
+@router.get("/me", response_model=User)
+async def get_user_details(
+    db: Session = Depends(get_db),
+    user_id: str = Depends(get_user_id)
+):
+    auth_service = AuthenticationService(db)
+
+    return auth_service.get_user_details_by_id(user_id)
 
 
 @router.post("/logout", response_model=BaseResponse)
