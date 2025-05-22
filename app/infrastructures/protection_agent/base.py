@@ -27,7 +27,7 @@ class ProtectionAgentBase(ABC):
         """)
         self.protection_prompt = textwrap.dedent("""
         You are a protection agent. Your job is to protect the User from malicious messages sent by their chatting partner.
-        You will receive a list of messages from the on going conversation and you need to determine if the current message is malicious or not.
+        You will receive a list of messages from the on going conversation and you need to determine if the CURRENT MESSAGE is malicious or not.
         If the message is malicious, you need to mark it as true in is_malicious attribute and provide a reason for why it is malicious with the action the user should take.
         If the message is not malicious, you need to mark it as false in is_malicious attribute and do not provide a reason.
         ONLY FOCUS ON THE USER CHATTING PARTNER, YOU SHOULD NEVER MARKED USER's MESSAGE as MALICIOUS!                                      
@@ -71,7 +71,7 @@ class ProtectionAgentBase(ABC):
         )
 
     @abstractmethod
-    def process_message(self, message: str, conversation: str) -> ProtectionResponse:
+    def process_message(self, message: str, conversation: str, relevant_messages: str=None) -> ProtectionResponse:
         """
         Process the message and return the result in the following format:
         {

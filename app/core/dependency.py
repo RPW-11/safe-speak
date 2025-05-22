@@ -7,6 +7,7 @@ from app.infrastructures.protection_agent.provider import ProtectionAgentProvide
 from app.infrastructures.adversary.provider import AdversaryAgentProvider
 from app.infrastructures.protection_agent.base import ProtectionAgentBase
 from app.infrastructures.adversary.base import AdversaryBase
+from app.infrastructures.vdb.qdrant_vdb import QdrantVDB
 from app.schemas.message_schema import MessageCreate
 
 async def get_user_id(
@@ -51,3 +52,11 @@ async def get_adversary_agent(
         return provider.get_agent(message_data.agent_model)
     except ValueError as e:
         raise NotFoundException(detail=str(e))
+
+
+def initialize_dependencies():
+    qdrant_vdb = QdrantVDB()
+    qdrant_vdb.initialize()
+    qdrant_vdb.close()
+    
+

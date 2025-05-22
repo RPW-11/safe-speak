@@ -8,8 +8,9 @@ from app.core.config import settings
 from app.core.security import verify_password, get_password_hash, create_access_token, create_refresh_token, decode_token
 from app.repositories.user_repository import UserRepository
 from app.schemas.token_schema import Token
-from app.schemas.user_schema import UserLogin, UserCreate, UserCreateOAuth, User
-from app.core.exceptions import UnauthorizedException, DuplicateEntryException, NotFoundException
+from app.schemas.base_response_schema import BaseResponse
+from app.schemas.user_schema import UserLogin, UserCreate, UserCreateOAuth, User, UserUpdate
+from app.core.exceptions import UnauthorizedException, DuplicateEntryException, NotFoundException, UserInputException
 
 
 class AuthenticationService:
@@ -138,3 +139,11 @@ class AuthenticationService:
         if not user:
             raise NotFoundException("User not found")
         return user
+    
+    def update_user_img(self, user_update: UserUpdate, user_id: str) -> BaseResponse:
+        if not user_update.img_url:
+            raise UserInputException(detail="img_url does not exist")
+
+        self.user_repository.update_user(user_id, user_update)
+
+        return BaseResponse(detail="profile updated successfuly")

@@ -135,7 +135,7 @@ class UserRepository:
             if not db_user:
                 raise NotFoundException("User not found")
 
-            update_data = user_update.dict(exclude_unset=True)
+            update_data = user_update.model_dump(exclude_unset=True)
             
             # Check for duplicate username if it's being updated
             if 'username' in update_data:

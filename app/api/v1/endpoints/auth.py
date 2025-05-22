@@ -5,7 +5,7 @@ from datetime import timedelta
 import httpx
 
 from app.schemas.base_response_schema import BaseResponse
-from app.schemas.user_schema import UserCreate, UserLogin, User
+from app.schemas.user_schema import UserCreate, UserLogin, User, UserUpdate
 from app.core.database import get_db
 from app.core.dependency import get_user_id
 from app.services.authentication_service import AuthenticationService
@@ -159,6 +159,17 @@ async def get_user_details(
     auth_service = AuthenticationService(db)
 
     return auth_service.get_user_details_by_id(user_id)
+
+
+@router.patch("/update-profile", response_model=BaseResponse)
+async def update_profile(
+    user_update: UserUpdate,
+    db: Session = Depends(get_db),
+    user_id: str = Depends(get_user_id)
+):
+    auth_service = AuthenticationService(db)
+
+    return auth_service.update_user_img(user_update, user_id)
 
 
 @router.post("/logout", response_model=BaseResponse)

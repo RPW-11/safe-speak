@@ -20,6 +20,14 @@ class Settings(BaseSettings):
     # GEMINI CONFIGURATION
     GEMINI_API_KEY: str = ""
 
+    # QDRANT VDB
+    QDRANT_API_KEY: str = ""
+    QDRANT_HOST: str = ""
+
+    # VDB SETTINGS
+    COLLECTION_NAME: str = "safe-speak"
+    EMBEDDING_DIM: int = 768
+
     # OAUTH CONFIGURATION
     OAUTH_PROVIDERS: List[str] = ["google"]
     GOOGLE_OAUTH_CLIENT_ID: str = ""

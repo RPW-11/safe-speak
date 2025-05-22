@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Text, DateTime, ForeignKey, func
+from sqlalchemy import Column, Text, DateTime, ForeignKey, Boolean, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 import uuid
@@ -13,6 +13,7 @@ class Message(Base):
     role = Column(Text, nullable=False)
     agent_model = Column(Text, nullable=False)
     model = Column(Text, nullable=True)
+    rag_enabled = Column(Boolean, nullable=False, default=False)
     type = Column(Text, nullable=False)
     content = Column(Text, nullable=False)
     img_url = Column(Text, nullable=True)

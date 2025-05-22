@@ -10,6 +10,7 @@ class MessageBase(BaseModel):
     model: str
     type: str
     content: str
+    rag_enabled: Optional[bool] = False
     img_url: Optional[str] = None
 
 

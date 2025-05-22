@@ -46,6 +46,7 @@ class UserUpdate(BaseModel):
         max_length=100,
         description="New password (will be hashed)"
     )
+    img_url: Optional[str] = None
 
     @field_validator('password')
     def validate_password_if_present(cls, v):

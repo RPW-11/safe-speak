@@ -1,8 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.api.v1.routes import router as v1_router
 from app.core.handlers import add_exception_handlers
+from app.core.dependency import initialize_dependencies
 
 
 class AppCreator:
@@ -12,6 +14,7 @@ class AppCreator:
             description=settings.PROJECT_DESCRIPTION,
             version=settings.PROJECT_VERSION,
             openapi_url=f"{settings.API_V1_STR}/openapi.json",
+            lifespan=AppCreator.lifespan
         )
         
         self.app.add_middleware(
@@ -30,6 +33,12 @@ class AppCreator:
 
     def create_app(self):
         return self.app
+    
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        initialize_dependencies()
+        yield
+
     
 
 app_creator = AppCreator()

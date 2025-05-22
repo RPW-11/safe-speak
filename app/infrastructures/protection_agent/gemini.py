@@ -17,7 +17,7 @@ class GeminiProtectionAgent(ProtectionAgentBase):
             Message: {message}
         """)
 
-    def process_message(self, message, conversation) -> ProtectionResponse:
+    def process_message(self, message, conversation, relevant_messages: str=None) -> ProtectionResponse:
         system_prompt = self.get_system_prompt(conversation, message)
 
         response = self.client.models.generate_content(
@@ -36,6 +36,11 @@ class GeminiProtectionAgent(ProtectionAgentBase):
             print(image_desc)
 
         content = system_prompt if not image_desc else f"{system_prompt}\n{image_desc}"
+
+        if relevant_messages and relevant_messages != "":
+            content += f"\n\n{relevant_messages}"
+
+        print(f"{content}")
 
         response = self.client.models.generate_content(
             model=self.model,

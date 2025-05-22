@@ -15,6 +15,7 @@ class MessageRepository:
             role=role,
             agent_model = message.agent_model,
             model=message.model,
+            rag_enabled=message.rag_enabled,
             type=message.type,
             content=message.content,
             img_url=message.img_url
@@ -25,6 +26,9 @@ class MessageRepository:
         self.db.refresh(db_message)
 
         return db_message
+
+    def get_message_by_id(self, message_id: str) -> Message:
+        return self.db.query(Message).filter(Message.id == message_id).first()
 
     def load_messages_by_convo_id(self, conversation_id: UUID):
         return self.db.query(Message).filter(Message.conversation_id == conversation_id).options(joinedload(Message.threat_indicator)).order_by(Message.created_at.asc()).all()
